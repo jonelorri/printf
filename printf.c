@@ -14,11 +14,6 @@
 #include <unistd.h>
 #include <stdio.h>
 
-void	ft_putptr(void *ptr)
-{
-	write(1, ptr, 10);
-}
-
 void	ft_putstr(const char *n)
 {
 	int	i;
@@ -57,6 +52,26 @@ void	ft_putnbr(int nb)
 		ft_putchar(nb + 48);
 }
 
+int	ft_putptr (unsigned int ptr)
+{
+	char *a;
+	int	static i;
+
+	a = "123456789abcdef";
+	i = 0;
+	if (ptr > 15)
+	{
+		ft_putptr(ptr / 16);
+		ft_putptr(ptr % 16);
+	}
+	else
+	{
+		ft_putchar(a[ptr]);
+		i++;
+	}
+	return (i);
+}
+
 int	ft_printf(const char *format, ...)
 {
 	int		i;
@@ -80,13 +95,13 @@ int	ft_printf(const char *format, ...)
 			if (format[i] == '%')
 				write(1, &p, 1);
 			if (format[i] == 'p')
-				ft_putptr(va_arg(ap, void *));
+				ft_putptr(va_arg(ap, unsigned int));
 			i++;
 		}
 		write(1, &format[i] , 1);
 		i++;
 	}
-   return(i);
+	return(i);
 }
 
 int	main(){
@@ -99,6 +114,7 @@ int	main(){
 	i = 115;
 	ptr = &a;
 	ft_printf("El valor %% de a es: %c y el de i es: %d\n", a, i);
-	ft_printf("El valor de x es: %s\nEl valor de ptr es: %p", x, ptr);
+	ft_printf("El valor de x es: %s\nEl valor de ptr es: %p\n", x, ptr);
+	printf("puntero bueno: %p", ptr);
 	return(0);
 }
