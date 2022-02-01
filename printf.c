@@ -14,7 +14,7 @@
 #include <unistd.h>
 #include <stdio.h>
 
-void	ft_putstr(const char *n)
+int	ft_putstr(const char *n)
 {
 	int	i;
 
@@ -24,19 +24,29 @@ void	ft_putstr(const char *n)
 		write(1, &n[i], 1);
 		i++;
 	}
+	return (i);
 }
 
-void	ft_putchar(char c)
+int	ft_putchar(char c)
 {
-	write(1, &c, 1);
+	if (c)
+	{
+		write(1, &c, 1);
+		return (1);
+	}
+	else
+		return (0);
 }
 
-void	ft_putnbr(int nb)
+int	ft_putnbr(int nb)
 {
+	int	i;
+
+	i = 0;
 	if (nb == -2147483648)
 	{
 		write(1, "-2147483648", 11);
-		return ;
+		return (0);
 	}
 	if (nb < 0)
 	{
@@ -50,6 +60,8 @@ void	ft_putnbr(int nb)
 	}
 	else
 		ft_putchar(nb + 48);
+		i++;
+	return (i);
 }
 
 int	ft_putnbr_(int nb)
