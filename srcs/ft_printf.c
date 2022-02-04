@@ -10,64 +10,43 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../incs/ft_printf.h"
 #include <stdarg.h>
-#include <unistd.h>
-#include <stdio.h>
 
-int	ft_putstr(const char *n);
-int	ft_putchar(char c);
-int	ft_putnbr(int nb);
-int	ft_putnbr_(int nb);
-int	ft_putptr(unsigned int ptr);
-int	ft_puthexa(unsigned int nbr);
+static int	ft_write_specifier(va_list ap, char c, int i)
+{
+	if (c == 'c')
+		i += ft_putchar(va_arg(ap, int));
+	else if (c == 's')
+		i += ft_putstr(va_arg(ap, char *));
+	else if (c == 'p')
+		i += ft_putstr("0x") + ft_puthex(va_arg(ap, size_t), c);
+	else if (c == 'd' || c == 'i')
+		i += ft_putnbr(va_arg(ap, int));
+	else if (c == 'u')
+		i += ft_putunbr(va_arg(ap, unsigned int));
+	else if (c == 'x' || c == 'X')
+		i += ft_puthex(va_arg(ap, unsigned int), c);
+	else if (c == '%')
+		i += ft_putchar('%');
+	return (i);
+}
 
 int	ft_printf(const char *format, ...)
 {
-	int		i;
 	va_list	ap;
-	char	p;
+	int	i;
 
-	p = '%';
 	i = 0;
 	va_start(ap, format);
-	while (format[i])
+	while (*format)
 	{
-		if (format[i] == '%')
-		{
-			i++;
-			if (format[i] == 's')
-				ft_putstr(va_arg(ap, char *));
-			if (format[i] == 'd')
-				ft_putnbr(va_arg(ap, int));
-			if (format[i] == 'c')
-				ft_putchar(va_arg(ap, int));
-			if (format[i] == '%')
-				write(1, &p, 1);
-			if (format[i] == 'u')
-				ft_putnbr_(va_arg(ap, int));
-			if (format[i] == 'x')
-				ft_puthexa(va_arg(ap, unsigned int));
-			if (format[i] == 'p')
-				write(1, "0x", 2);
-				ft_putptr(va_arg(ap, unsigned int));
-			i++;
-		}
-		write(1, &format[i] , 1);
-		i++;
+		if (*format == '%')
+			i = ft_write_specifier(ap, *++format, i);
+		else
+			i += ft_putchar(*format);
+		format++;
 	}
-	return(i);
-}
-
-int	main(){
-	char	x[5] = {"hola"};
-	int	i;
-	char	a;
-	void 	*ptr;
-
-	a = '1';
-	i = 115;
-	ptr = &a;	
-	ft_printf("El valor de ptr es: %p\n", ptr);
-	printf("puntero bueno: %p", ptr);
-	return(0);
+	va_end(ap);
+	return (i);
 }
